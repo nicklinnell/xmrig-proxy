@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xmrig-proxy
+  namespace: xmrig-proxy
+  labels:
+    app: xmrig-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: xmrig-proxy
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: xmrig-proxy
+    spec:
+      containers:
+        - image: nicklinnell/xmrig-proxy
+          imagePullPolicy: IfNotPresent
+          name: xmrig-proxy
+          ports:
+            - containerPort: 3333
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /usr/local/bin/config.json
+              name: proxy-config
+              subPath: config.json
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: config.json
+                path: config.json
+            name: xmrig-proxy-configmap
+          name: proxy-config
