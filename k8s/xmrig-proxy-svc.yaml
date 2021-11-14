@@ -9,6 +9,10 @@ spec:
       protocol: TCP
       port: 3333
       targetPort: http
+    - name: api
+      protocol: TCP
+      port: 8080
+      targetPort: api
   selector:
     app: xmrig-proxy
   type: LoadBalancer
